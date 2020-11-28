@@ -14,6 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: SafeArea(
         child: Scaffold(
           backgroundColor: Colors.red[700],
@@ -21,7 +22,13 @@ class MyApp extends StatelessWidget {
             shadowColor: Colors.pink,
             backgroundColor: Colors.redAccent[700],
             centerTitle: true,
-            title: Text('Dice Role'),
+            title: Text(
+              'Dice Role',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 40,
+              ),
+            ),
           ),
           body: Dicepage(),
         ),
@@ -38,15 +45,36 @@ class Dicepage extends StatefulWidget {
 class _DicepageState extends State<Dicepage> {
   var leftdice = 4;
   var rightdice = 5;
+  int counter = 0;
+  var highscore = 0;
+  highscor() {
+    highscore = counter;
+  }
+
+  resetcounter() {
+    counter = 0;
+    print('res');
+    print(counter);
+  }
+
+  void incrementCounter() {
+    counter++;
+    print('inc');
+    print(counter);
+    if (counter > highscore) {
+      highscor();
+    }
+  }
+
   showAlertDialog(BuildContext context) {
     // set up the buttons
-    Widget cancelButton = FlatButton(
-      child: Text("Cancel"),
-      onPressed: () {
-        // SystemChannels.navigation.;
-        exit(0);
-      },
-    );
+    // Widget cancelButton = FlatButton(
+    //   child: Text("Cancel"),
+    //   onPressed: () {
+    //     // SystemChannels.navigation.;
+    //     exit(0);
+    //   },
+    // );
     Widget continueButton = FlatButton(
       child: Text("Continue"),
       onPressed: () {
@@ -59,7 +87,7 @@ class _DicepageState extends State<Dicepage> {
       title: Text("Game Over"),
       content: Text("Would you like to continue Playing"),
       actions: [
-        cancelButton,
+        //cancelButton,
         continueButton,
       ],
     );
@@ -80,9 +108,7 @@ class _DicepageState extends State<Dicepage> {
       print(rightdice);
       print(leftdice);
       if (rightdice == leftdice) {
-        Scaffold.of(context).showSnackBar(SnackBar(
-          content: Text("Game Over"),
-        ));
+        resetcounter();
         showAlertDialog(context);
       }
     });
@@ -93,30 +119,75 @@ class _DicepageState extends State<Dicepage> {
   Widget build(BuildContext context) {
     //every thing that have something to do only works inside build method
     return Center(
-      child: Row(
+      child: Column(
         children: [
           Expanded(
-            child: FlatButton(
-              onPressed: () {
-                Diceface();
-              },
-              child: Image(
-                image: AssetImage('images/dice$leftdice.png'),
-              ),
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: FlatButton(
+                    onPressed: () {
+                      incrementCounter();
+                      Diceface();
+                    },
+                    child: Image(
+                      image: AssetImage('images/dice$leftdice.png'),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: 10.0,
+                ),
+                Expanded(
+                  flex: 3,
+                  child: FlatButton(
+                    onPressed: () {
+                      Diceface();
+                      incrementCounter();
+                    },
+                    child: Image(
+                      image: AssetImage('images/dice$rightdice.png'),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-          SizedBox(
-            width: 10.0,
-          ),
-          Expanded(
-            child: FlatButton(
-              onPressed: () {
-                Diceface();
-              },
-              child: Image(
-                image: AssetImage('images/dice$rightdice.png'),
+          Row(
+            children: [
+              Expanded(
+                flex: 2,
+                child: Center(
+                  child: Container(
+                    margin: EdgeInsets.all(20.0),
+                    child: Row(
+                      children: [
+                        Text(
+                          'Score: $counter',
+                          style: TextStyle(
+                            fontSize: 30.0,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 40.0,
+                        ),
+                        Text(
+                          'High Score: $highscore',
+                          style: TextStyle(
+                            fontSize: 30.0,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
         ],
       ),
